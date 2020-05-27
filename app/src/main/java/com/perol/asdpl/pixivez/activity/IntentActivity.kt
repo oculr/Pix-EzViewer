@@ -56,9 +56,11 @@ class IntentActivity : RinkActivity() {
                 }
                 return
             }
-            if (segment.size == 2) {
+            //en/user/xxxx
+            if (segment.size == 2 || segment.size == 3) {
                 if (segment[segment.size - 2] == "users") {
-                    val id = segment[segment.size - 1].toLong()
+                    val s = segment[segment.size - 1]
+                    val id = s.toLong()
                     try {
                         val intent1 = Intent(this, UserMActivity::class.java)
                         intent1.putExtra("data", id)
@@ -114,15 +116,21 @@ class IntentActivity : RinkActivity() {
                     Toasty.error(this, "wrong id")
                 }
             }
-
+            uri.getQueryParameter("id")?.let {
+                try {
+                    UserMActivity.start(this, it.toLong())
+                    finish()
+                    return
+                } catch (e: Exception) {
+                    Toasty.error(this, "wrong id")
+                }
+            }
             if (uri.encodedSchemeSpecificPart.contains("/fanbox/creator/")) {
                 val index = uri.pathSegments.indexOf("creator") + 1
                 val targetString = uri.pathSegments[index]
                 targetString.toLongOrNull()?.let {
                     try {
-                        val intent1 = Intent(this, UserMActivity::class.java)
-                        intent1.putExtra("data", it)
-                        startActivity(intent1)
+                        UserMActivity.start(this, it)
                         finish()
                     } catch (e: Exception) {
                         Toasty.error(this, "wrong id")

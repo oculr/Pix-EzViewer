@@ -25,8 +25,11 @@
 package com.perol.asdpl.pixivez.viewmodel
 
 import androidx.lifecycle.MutableLiveData
+import androidx.preference.PreferenceManager
+import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.repository.RetrofitRepository
 import com.perol.asdpl.pixivez.responses.Illust
+import com.perol.asdpl.pixivez.services.PxEZApp
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -39,17 +42,21 @@ fun Calendar?.generateDateString(): String? {
 
 class IllustfragmentViewModel : BaseViewModel() {
     var sortT = arrayOf("date_desc", "date_asc", "popular_desc")
-    var search_targetT =
+    var searchTargetT =
         arrayOf("partial_match_for_tags", "exact_match_for_tags", "title_and_caption")
-
+    var isPreview = false
     var illusts = MutableLiveData<ArrayList<Illust>>()
     var addIllusts = MutableLiveData<ArrayList<Illust>>()
     var retrofitRespository = RetrofitRepository.getInstance()
     var nexturl = MutableLiveData<String>()
     var bookmarkid = MutableLiveData<Long>()
     var isRefresh = MutableLiveData<Boolean>(false)
-    val sort = MutableLiveData<String>(sortT[0])
-    val searchTarget = MutableLiveData<String>(search_targetT[0])
+    var hideBookmarked = MutableLiveData<Boolean>(
+        PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance)
+            .getBoolean(UserMActivity.HIDE_BOOKMARK_ITEM, false)
+    )
+    val sort = MutableLiveData<Int>(0)
+    val searchTarget = MutableLiveData<Int>(0)
     val startDate = MutableLiveData<Calendar>()
     val endDate = MutableLiveData<Calendar>()
     fun setPreview(word: String, sort: String, search_target: String?, duration: String?) {
@@ -71,22 +78,24 @@ class IllustfragmentViewModel : BaseViewModel() {
             startDate.value = null
             endDate.value = null
         }
-
-        retrofitRespository.getSearchIllust(
-            word,
-            sort.value!!,
-            searchTarget.value!!,
-            startDate.value.generateDateString(),
-            endDate.value.generateDateString(),
-            null
-        )
-            .subscribe({
-                illusts.value = ArrayList<Illust>(it.illusts)
-                nexturl.value = it.next_url
-                isRefresh.value = false
-            }, {
-                it.printStackTrace()
-            }, {}).add()
+        if (isPreview) {
+            setPreview(word, sortT[sort.value!!], searchTargetT[searchTarget.value!!], null)
+        } else
+            retrofitRespository.getSearchIllust(
+                word,
+                sortT[sort.value!!],
+                searchTargetT[searchTarget.value!!],
+                startDate.value.generateDateString(),
+                endDate.value.generateDateString(),
+                null
+            )
+                .subscribe({
+                    illusts.value = ArrayList<Illust>(it.illusts)
+                    nexturl.value = it.next_url
+                    isRefresh.value = false
+                }, {
+                    it.printStackTrace()
+                }, {}).add()
     }
 
     fun onLoadMoreListen() {

@@ -32,8 +32,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.RecommendAdapter
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
 import com.perol.asdpl.pixivez.objects.BaseFragment
@@ -66,24 +68,26 @@ class UserIllustFragment : BaseFragment() {
             blockTags = allTags.map {
                 it.name
             }
+            recommendAdapter.hideBookmarked = viewactivity.viewModel.hideBookmarked.value!!
             recommendAdapter.blockTags = blockTags
             recommendAdapter.notifyDataSetChanged()
         }
     }
 
     fun lazyLoad() {
-        recommendAdapter.setOnLoadMoreListener({
+        recommendAdapter.loadMoreModule?.setOnLoadMoreListener {
             viewmodel.onLoadMoreListener()
-        }, mrecyclerview)
+        }
         mrefreshlayout.setOnRefreshListener {
             viewmodel.onRefreshListener(param1!!, param2!!)
         }
         mrecyclerview.layoutManager =
             StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         mrecyclerview.adapter = recommendAdapter
+
+
     }
 
-    // TODO: Rename and change types of parameters
     private var param1: Long? = null
     private var param2: String? = null
 
@@ -102,10 +106,11 @@ class UserIllustFragment : BaseFragment() {
                 recommendAdapter.loadMoreComplete()
             }
         })
+        viewactivity = activity as UserMActivity
         viewmodel.data.observe(this, Observer {
             if (it != null) {
                 mrefreshlayout.isRefreshing = false
-                recommendAdapter.setNewData(it)
+                recommendAdapter.setNewData(it.toMutableList())
             }
 
         })
@@ -123,7 +128,7 @@ class UserIllustFragment : BaseFragment() {
     }
 
     lateinit var viewmodel: UserMillustViewModel
-
+    lateinit var viewactivity: UserMActivity
 
     lateinit var recommendAdapter: RecommendAdapter
     override fun onCreateView(
@@ -131,7 +136,14 @@ class UserIllustFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        recommendAdapter = RecommendAdapter(R.layout.view_recommand_item, null, isR18on, blockTags)
+        recommendAdapter = RecommendAdapter(
+            R.layout.view_recommand_item,
+            null,
+            isR18on,
+            blockTags,
+            PreferenceManager.getDefaultSharedPreferences(requireActivity())
+                .getBoolean(UserMActivity.HIDE_BOOKMARK_ITEM, false)
+        )
 
         return inflater.inflate(R.layout.fragment_user_illust, container, false)
     }

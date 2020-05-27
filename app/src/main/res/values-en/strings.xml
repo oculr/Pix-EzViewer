@@ -251,6 +251,7 @@
     <string name="start_date">Start Date</string>
     <string name="end_date">End Date</string>
     <string name="choice_date">Choice Date</string>
+    <string name="hide_bookmarked">Hide Bookmarked Pic</string>
     <string name="create_painter_folder">Create a separate folder for each painter</string>
     <string name="create_separate_folder">create separate folder</string>
     <string name="refresh_token">refresh token</string>
@@ -261,4 +262,11 @@
     <string name="block_tag">Block tag</string>
     <string name="block_face"><![CDATA[>_<]]></string>
     <string name="help_maintenance">Help maintenance</string>
+    <string name="max_task_num">Max task num</string>
+    <string name="task_setting">Task Setting</string>
+    <string name="all_resume">Resume All</string>
+    <string name="all_cancel">Clear queue</string>
+    <string name="save_zip">save zip</string>
+    <string name="already_going_on">It\'s already going on</string>
+    <string name="save_zip_success">save zip success</string>
 </resources>

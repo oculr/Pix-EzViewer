@@ -60,6 +60,18 @@ class ThanksFragment : PreferenceFragmentCompat() {
                 true
             }
         }
+
+        findPreference<Preference>("ultranity")?.apply {
+            loadDrawableByUrl(
+                "https://avatars.githubusercontent.com/ultranity",
+                R.drawable.xuemo,
+                onLoadCleared = { it?.let { icon = it } },
+                onResourceReady = { icon = it })
+            onPreferenceClickListener = Preference.OnPreferenceClickListener {
+                startActivityByUri("https://github.com/ultranity")
+                true
+            }
+        }
         findPreference<Preference>("hunterx9")?.apply {
             loadDrawableByUrl(
                 "https://avatars.githubusercontent.com/hunterx9",
@@ -83,6 +95,28 @@ class ThanksFragment : PreferenceFragmentCompat() {
             }
         }
 
+        findPreference<Preference>("TragicLife")?.apply {
+            loadDrawableByUrl(
+                "https://avatars.githubusercontent.com/TragicLifeHu",
+                R.drawable.skimige,
+                onLoadCleared = { it?.let { icon = it } },
+                onResourceReady = { icon = it })
+            onPreferenceClickListener = Preference.OnPreferenceClickListener {
+                startActivityByUri("https://github.com/TragicLifeHu")
+                true
+            }
+        }
+        findPreference<Preference>("Misoni")?.apply {
+            loadDrawableByUrl(
+                "https://avatars.githubusercontent.com/MISONLN41",
+                R.drawable.skimige,
+                onLoadCleared = { it?.let { icon = it } },
+                onResourceReady = { icon = it })
+            onPreferenceClickListener = Preference.OnPreferenceClickListener {
+                startActivityByUri("https://github.com/MISONLN41")
+                true
+            }
+        }
 //        listOf(
 //            mapOf(
 //                "Preference" to findPreference<Preference?>("xuemo"),
@@ -120,7 +154,7 @@ class ThanksFragment : PreferenceFragmentCompat() {
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         when (preference?.key) {
             "support" -> startActivityByUri("https://play.google.com/store/apps/details?id=com.perol.asdpl.play.pixivez")
-            "pr" -> startActivityByUri("https://github.com/Notsfsssf/Pix-EzViewer/pulls")
+            /*  "pr" -> startActivityByUri("https://github.com/Notsfsssf/Pix-EzViewer/pulls")*/
             "thanks" -> {
                 val thanksDialog = ThanksDialog()
                 thanksDialog.show(childFragmentManager)

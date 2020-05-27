@@ -26,14 +26,18 @@ package com.perol.asdpl.pixivez.fragments
 
 import android.graphics.Color
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.tabs.TabLayout
 import com.perol.asdpl.pixivez.R
+import com.perol.asdpl.pixivez.activity.UserMActivity
 import com.perol.asdpl.pixivez.adapters.RecommendAdapter
 import com.perol.asdpl.pixivez.dialog.SearchSectionDialog
 import com.perol.asdpl.pixivez.objects.AdapterRefreshEvent
@@ -87,16 +91,19 @@ class IllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
                 runBlocking {
                     val user = AppDataRepository.getUser()
                     if (!user.ispro) {
+                        viewModel.isPreview = true
                         Toasty.error(PxEZApp.instance, "not premium!").show()
                         viewModel.setPreview(param1!!, sort[position], null, null)
                     } else {
-                        viewModel.sort.value = sort[position]
+                        viewModel.isPreview = false
+                        viewModel.sort.value = position
                         viewModel.firstSetData(param1!!)
                     }
 
                 }
             } else {
-                viewModel.sort.value = sort[position]
+                viewModel.isPreview = false
+                viewModel.sort.value = position
                 viewModel.firstSetData(param1!!)
             }
         }
@@ -148,7 +155,7 @@ class IllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
                 }
             builder.create().show()
         }
-        val imageButton = activity!!.findViewById<ImageButton>(R.id.imagebutton_section)
+        val imageButton = requireActivity().findViewById<ImageButton>(R.id.imagebutton_section)
         imageButton.setOnClickListener {
             SearchSectionDialog().apply {
                 arguments = Bundle().apply {
@@ -156,9 +163,9 @@ class IllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
                 }
             }.show(childFragmentManager)
         }
-        searchIllustAdapter.setOnLoadMoreListener({
+        searchIllustAdapter.loadMoreModule?.setOnLoadMoreListener {
             viewModel.onLoadMoreListen()
-        }, recyclerview_illust)
+        }
         swiperefresh.setOnRefreshListener {
             runBlocking {
                 val user = AppDataRepository.getUser()
@@ -177,42 +184,16 @@ class IllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
                 }
             }
         }
-/*        val gestureDetector =
-            GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
-                override fun onFling(
-                    e1: MotionEvent,
-                    e2: MotionEvent,
-                    velocityX: Float,
-                    velocityY: Float
-                ): Boolean {
-
-                    return false
-                }
-
-                override fun onDoubleTap(e: MotionEvent?): Boolean {
-                    return super.onDoubleTap(e)
-
-                }
-
-                override fun onLongPress(e: MotionEvent?) {
-                    super.onLongPress(e)
-
-                }
-            })
-        requireActivity().findViewById<TabLayout>(R.id.tablayout_searchresult)?.getTabAt(0)
-            ?.view?.setOnTouchListener { v, event ->
-            gestureDetector.onTouchEvent(event)
-        }*/
         requireActivity().findViewById<TabLayout>(R.id.tablayout_searchresult)?.getTabAt(0)
             ?.view?.setOnClickListener {
-            if ((System.currentTimeMillis() - exitTime) > 3000) {
+                if ((System.currentTimeMillis() - exitTime) > 3000) {
 
-                exitTime = System.currentTimeMillis()
-            } else {
-                recyclerview_illust.smoothScrollToPosition(0)
+                    exitTime = System.currentTimeMillis()
+                } else {
+                    recyclerview_illust.smoothScrollToPosition(0)
+                }
+
             }
-
-        }
     }
 
     private val starnum = intArrayOf(50000, 30000, 20000, 10000, 5000, 1000, 500, 250, 100, 0)
@@ -249,8 +230,6 @@ class IllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-
         return inflater.inflate(R.layout.fragment_illust, container, false)
     }
 
@@ -273,7 +252,14 @@ class IllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
         viewModel.isRefresh.observe(this, Observer {
             swiperefresh.isRefreshing = it
         })
-
+        viewModel.hideBookmarked.observe(this, Observer {
+            if (it != null) {
+                PreferenceManager.getDefaultSharedPreferences(PxEZApp.instance).edit().putBoolean(
+                    UserMActivity.HIDE_BOOKMARK_ITEM, it
+                ).apply()
+                searchIllustAdapter.hideBookmarked = it
+            }
+        })
     }
 
     private fun addIllust(it: java.util.ArrayList<Illust>) {
@@ -285,7 +271,6 @@ class IllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
     private fun changeToBlue(it: Long?) {
         if (it != null) {
             val item = searchIllustAdapter.getViewByPosition(
-                recyclerview_illust,
                 position!!,
                 R.id.linearlayout_isbookmark
             ) as LinearLayout
@@ -295,11 +280,8 @@ class IllustFragment : BaseFragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun nexturl(it: String?) {
-        if (it != null) {
+        it ?: searchIllustAdapter.loadMoreEnd()
 
-        } else {
-            searchIllustAdapter.loadMoreEnd()
-        }
     }
 
     private fun updateillust(it: ArrayList<Illust>?) {

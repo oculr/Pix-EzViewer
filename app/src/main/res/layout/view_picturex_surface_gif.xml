@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="300dp"
+    android:orientation="vertical">
+
+    <com.perol.asdpl.pixivez.objects.AnimationView
+        android:id="@+id/imageview_gif"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
+
+    <ImageView
+        android:id="@+id/preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true" />
+
+    <com.dinuscxj.progressbar.CircleProgressBar
+        android:id="@+id/progressbar_gif"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        app:progress_stroke_width="3dp"
+        app:style="solid_line" />
+
+    <ImageView
+        android:id="@+id/imageview_play"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="2dp"
+        android:alpha="0.9"
+        android:src="@drawable/ic_action_play"
+        android:tint="@color/white" />
+</FrameLayout>

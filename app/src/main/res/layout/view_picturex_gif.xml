@@ -1,28 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-<ImageView
-    android:id="@+id/imageview_gif"
-    android:adjustViewBounds="true"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/imageview_gif"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true" />
+
     <com.dinuscxj.progressbar.CircleProgressBar
         android:id="@+id/progressbar_gif"
-        android:layout_gravity="center"
-        app:style="solid_line"
         android:layout_width="50dp"
-        app:progress_stroke_width="3dp"
-        android:layout_height="50dp" />
-    <ImageView
-        android:tint="@color/white"
-        android:src="@drawable/ic_action_play"
-        android:id="@+id/imageview_play"
+        android:layout_height="50dp"
         android:layout_gravity="center"
-        android:alpha="0.9"
+        app:progress_stroke_width="3dp"
+        app:style="solid_line" />
+
+    <ImageView
+        android:id="@+id/imageview_play"
         android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
         android:layout_marginLeft="2dp"
-        android:layout_height="40dp" />
+        android:alpha="0.9"
+        android:src="@drawable/ic_action_play"
+        android:tint="@color/white" />
 </FrameLayout>

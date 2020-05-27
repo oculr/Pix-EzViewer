@@ -16,13 +16,16 @@
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/AppThemeBase">
-
-
-        <activity android:name=".activity.BlockActivity"></activity>
-        <activity android:name=".activity.NovelActivity" />
         <activity
-            android:name=".activity.ProgressActivity"
-            android:label="@string/title_activity_progress" />
+            android:name=".manager.ManagerSettingsActivity"
+            android:label="@string/title_activity_manager_settings"></activity>
+
+        <activity
+            android:name=".activity.ImgDActivity"
+            android:label="@string/title_activity_img_d"
+            android:theme="@style/AppThemeBase.NoActionBar" />
+        <activity android:name=".activity.BlockActivity" />
+        <activity android:name=".activity.NovelActivity" />
         <activity android:name=".activity.WebViewActivity" />
         <activity
             android:name=".activity.SettingActivity"
@@ -141,6 +144,7 @@
         <activity android:name=".activity.HistoryMActivity" />
         <activity android:name=".activity.UserShowActivity" />
         <activity android:name=".activity.UserMActivity" />
+        <activity android:name=".manager.DownloadManagerActivity" />
     </application>
 
 </manifest>
